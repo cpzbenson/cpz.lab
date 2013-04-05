@@ -1,0 +1,49 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <link rel="stylesheet" href="demos.css" type="text/css" media="screen" />
+    
+    <script src="../libraries/RGraph.common.core.js" ></script>
+    <script src="../libraries/RGraph.common.effects.js" ></script>
+    <script src="../libraries/RGraph.common.key.js" ></script>
+    <script src="../libraries/RGraph.scatter.js" ></script>
+    <script src="../libraries/jquery.min.js" ></script>
+    <!--[if lt IE 9]><script src="../excanvas/excanvas.js"></script><![endif]-->
+    
+    <title>A stepped Line chart with Trace effect</title>
+</head>
+<body>
+
+    <h1>A stepped Line chart with Trace effect</h1>
+    
+    <p>
+        Also has a dashed line drawn at Y=50
+    </p>
+
+    <canvas id="cvs" width="600" height="250">[No canvas support]</canvas>
+    
+    <script>
+		
+		window.onload = function ()
+    {
+        var scatter = new RGraph.Scatter('cvs', [[76, 6.5],[34,5.5],[12,4.5],[48,3.5],[43,2.5],[14,1.5],[5,0.5]]);
+        scatter.Set('chart.xmax', 100);
+        scatter.Set('chart.ymax', 7);
+        scatter.Set('chart.line', 1);
+        scatter.Set('chart.background.grid.autofit', true);
+        scatter.Set('chart.background.grid.autofit.numhlines', 14);
+        scatter.Set('chart.background.grid.autofit.numvlines', 5);
+        scatter.Set('chart.ylabels.specific', ['', 'Monday','', 'Tuesday','', 'Wednesday','', 'Thursday','', 'Friday','', 'Saturday','', 'Sunday']);
+        scatter.Set('chart.gutter.left', 75);
+        scatter.Set('chart.xscale', true);
+        scatter.Set('chart.numyticks', 14);
+        scatter.Draw();
+    }
+    </script>
+
+    <p>
+        <a href="./">&laquo; Back</a>
+    </p>
+
+</body>
+</html>

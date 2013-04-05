@@ -1,0 +1,3 @@
+svg 畫圖
+不需 html 5 
+無法 vertical chart
