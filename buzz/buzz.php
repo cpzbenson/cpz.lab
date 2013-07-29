@@ -16,15 +16,15 @@
 				mySound.load();
 				mySound.play();
 				
-				mySound.setSpeed(1.9);
+				//mySound.setSpeed(1.9);
+				mySound.setTime(0.9);
             });
 			
 		</script>    		
 	</head>
 			
 	<body>
-		<?
-		
+		<?		
 			echo "asdsadds";
 		?>
 
