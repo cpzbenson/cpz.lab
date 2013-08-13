@@ -17,7 +17,7 @@
 				mySound.play();
 				
 				//mySound.setSpeed(1.9);
-				mySound.setTime(0.9);
+				//mySound.setTime(10);
             });
 			
 		</script>    		

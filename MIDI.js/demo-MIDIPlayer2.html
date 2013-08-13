@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <title>MIDI.js - Sequencing in Javascript.</title>
+ <!-- midi.js css -->
+ <link href="./css/MIDIPlayer.css" rel="stylesheet" type="text/css" />
+ <!-- midi.js package -->
+ <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+ <script src="./js/Color/SpaceW3.js" type="text/javascript"></script>
+ <script src="./js/MIDI/AudioDetect.js" type="text/javascript"></script>
+ <script src="./js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+ <script src="./js/MIDI/Plugin.js" type="text/javascript"></script>
+ <script src="./js/MIDI/Player.js" type="text/javascript"></script>
+ <script src="./js/MusicTheory/Synesthesia.js" type="text/javascript"></script>
+ <script src="./js/Widgets/Loader.js" type="text/javascript"></script>
+ <script src="./js/Window/Event.js" type="text/javascript"></script>
+ <script src="./js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+ <script src="./js/Window/DOMLoader.script.js" type="text/javascript"></script>
+ <!-- jasmid package -->
+ <script src="./inc/jasmid/stream.js"></script>
+ <script src="./inc/jasmid/midifile.js"></script>
+ <script src="./inc/jasmid/replayer.js"></script>
+ <!-- extras -->
+ <script src="./inc/Base64.js" type="text/javascript"></script>
+ <script src="./inc/base64binary.js" type="text/javascript"></script>
+</head>
+<body>
+<h1>MIDI.js - Sequencing in Javascript.</h1>
+<div style="position: fixed; top: 0; left: 0; z-index: 4; border-radius: 5px; overflow: hidden;" id="colors"></div>
+<div style="text-align: center; border-radius: 5px; position: absolute; top: -70px; left: -40px; opacity: 0.9" id="colors"></div>
+<div style="margin-bottom: 50px; border: 1px solid #000; background: rgba(255,255,255,0.5); border-radius: 10px; float: left; width: 800px; padding-bottom: 100px; position: relative; z-index: 2;">
+ <div class="player" style="height: 42px; box-shadow: 0 -1px #000; margin-bottom: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0;">
+  <div style="margin: 0 auto; width: 160px; float: right;">
+  <input type="image" src="./images/pause.png" align="absmiddle" value="pause" onclick="pausePlayStop()" id="pausePlayStop">
+  <input type="image" src="./images/stop.png" align="absmiddle" value="stop" onclick="pausePlayStop(true)">
+  <input type="image" src="./images/backward.png" align="absmiddle" value="stop" onclick="player.getNextSong(-1);">
+  <input type="image" src="./images/forward.png" align="absmiddle" value="stop" onclick="player.getNextSong(+1);">
+  </div>
+  <div class="time-controls" style="float: left; margin: 0; position: relative; top: 5px;">
+   <span id="time1" class="time">0:00</span>
+   <span id="capsule">
+	<span id="cursor"></span>
+   </span>
+   <span id="time2" class="time" style="text-align: left;">-0:00</span>
+  </div>
+ </div>
+ <div id="title" style="background: rgba(255,255,0,0.5); position: relative;color: #000; z-index: -1;padding: 5px 11px 5px;">Loading API...</div> 
+</div>
+<script type="text/javascript">
+
+if (typeof(console) === "undefined") var console = { log: function() { } };
+
+// Begin loading indication.
+var player;
+
+// MIDI files from Disklavier World
+var songid = 0;
+var song = [
+	//Sinding - Rustles of Spring Op-32 No-3
+	'123.mid'
+];
+
+
+// Toggle between Pause and Play modes.
+var pausePlayStop = function(stop) {
+	var d = document.getElementById("pausePlayStop");
+	if (stop) {
+		MIDI.Player.stop();
+		d.src = "./images/play.png";
+	} else if (MIDI.Player.playing) {
+		d.src = "./images/play.png";
+		MIDI.Player.pause(true);
+	} else {
+		d.src = "./images/pause.png";
+		MIDI.Player.resume();
+	}
+};
+
+Event.add(window, "load", function(event) {
+	var link = document.createElement('link');
+	link.href = 'http://fonts.googleapis.com/css?family=Oswald';
+	link.ref = "stylesheet";
+	link.type = "text/css";
+	document.body.appendChild(link);
+	var link = document.createElement('link');
+	link.href = 'http://fonts.googleapis.com/css?family=Andada';
+	link.ref = "stylesheet";
+	link.type = "text/css";
+	document.body.appendChild(link);
+	// load up the piano keys
+	var colors = document.getElementById("colors");
+	var colorElements = [];
+	for (var n = 0; n < 88; n ++) {
+		var d = document.createElement("div");
+		d.innerHTML = MIDI.noteToKey[n+21];
+		colorElements.push(d);
+		colors.appendChild(d);
+	}
+	//
+	MIDI.loader = new widgets.Loader;
+	MIDI.loadPlugin(function () {
+		// this is the language we are running in
+		var title = document.getElementById("title");
+		title.innerHTML = "Sound being generated with " + MIDI.lang + ".";
+		// this sets up the MIDI.Player and gets things going...
+		player = MIDI.Player;
+		player.timeWarp = 1; // speed the song is played back
+		player.loadFile(song[songid++%3], player.start);
+		// control the piano keys colors
+		var colorMap = MusicTheory.Synesthesia.map();
+		
+		
+		
+		player.addListener(function(data) {
+			var pianoKey = data.note - MIDI.pianoKeyOffset;
+			var d = colorElements[pianoKey];
+			$("#showNote1by1").append(", "+pianoKey);
+			//alert(data.channel);
+			if (data.message === 144) {
+				var map = colorMap[data.note - 27];
+				if (map) d.style.background = map.hex;
+				d.style.color = "#fff";
+			} else {
+				d.style.background = "";
+				d.style.color = "";
+			}
+		});
+		MIDI.loader.stop();
+	});
+});
+
+///////  ///////
+
+/////// SPHERE ///////
+
+
+
+
+</script>
+
+<div style="margin-top: 300px;" id="showNote1by1"></div>
+
+<div style="margin-top: 300px;" id="showNote"></div>
+
+</body>
+</html>
