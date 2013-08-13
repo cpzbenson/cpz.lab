@@ -111,12 +111,14 @@ Event.add(window, "load", function(event) {
 		var colorMap = MusicTheory.Synesthesia.map();
 		
 		
-		
+		//alert(MIDI.pianoKeyOffset);
 		player.addListener(function(data) {
-			var pianoKey = data.note - MIDI.pianoKeyOffset;
+			//var pianoKey = data.note - MIDI.pianoKeyOffset;
+			var pianoKey = data.note;
 			var d = colorElements[pianoKey];
 			$("#showNote1by1").append(", "+pianoKey);
-			//alert(data.channel);
+			//alert(data.message );
+			//alert(data.getLength);
 			if (data.message === 144) {
 				var map = colorMap[data.note - 27];
 				if (map) d.style.background = map.hex;
@@ -125,6 +127,7 @@ Event.add(window, "load", function(event) {
 				d.style.background = "";
 				d.style.color = "";
 			}
+			
 		});
 		MIDI.loader.stop();
 	});
