@@ -6,7 +6,6 @@
 		<meta http-equiv="Content-Language" content="zh-tw" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>登入</title>
-		<link rel="stylesheet" type="text/css" href="styles/login_regi.css" />
 		<meta http-equiv="X-UA-Compatible" content="IE=9"></meta>
 		
 		
